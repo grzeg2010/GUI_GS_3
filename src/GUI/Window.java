@@ -1,5 +1,7 @@
 package GUI;
 
+import GUI.Colors.Breeze;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -15,6 +17,7 @@ public class Window extends JFrame {
         // Content Pane settings
         JPanel contentPane = new JPanel();
         contentPane.setLayout(cardLayout);
+        this.setBackground(Breeze.BackgroundNormal);
         this.setContentPane(contentPane);
 
         // Adding elements

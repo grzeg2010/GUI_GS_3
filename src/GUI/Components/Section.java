@@ -1,20 +1,18 @@
 package GUI.Components;
 
+import GUI.Colors.Breeze;
+
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Section extends JPanel {
-    private Map<Integer, JPanel> fieldsMap;
+    private Map<Integer, GUI.Components.Field> fieldsMap;
 
     public Section() {
         this.setLayout(new GridLayout(3, 3));
-        this.setBackground(Color.red);
-        Border border = new LineBorder(Color.black, 10);
-        this.setBorder(border);
+        this.setBackground(Breeze.BackgroundNormal);
 
         fieldsMap = new HashMap<>();
 
@@ -25,5 +23,35 @@ public class Section extends JPanel {
                 Section.this.add(newSection);
             }
         }
+
+        drawBorders(fieldsMap);
     }
+
+    public static void drawBorders(Map<Integer, GUI.Components.Field> componentMap) {
+        Color borderColor = Breeze.ForegroundInactive;
+        int borderThickness = 2;
+
+        componentMap.get(0).setBorder(BorderFactory.createMatteBorder(0, 0, borderThickness, borderThickness, borderColor));
+        componentMap.get(1).setBorder(BorderFactory.createMatteBorder(0, borderThickness, borderThickness, borderThickness, borderColor));
+        componentMap.get(2).setBorder(BorderFactory.createMatteBorder(0, borderThickness, borderThickness, 0, borderColor));
+
+        componentMap.get(3).setBorder(BorderFactory.createMatteBorder(borderThickness, 0, borderThickness, borderThickness, borderColor));
+        componentMap.get(4).setBorder(BorderFactory.createMatteBorder(borderThickness, borderThickness, borderThickness, borderThickness, borderColor));
+        componentMap.get(5).setBorder(BorderFactory.createMatteBorder(borderThickness, borderThickness, borderThickness, 0, borderColor));
+
+        componentMap.get(6).setBorder(BorderFactory.createMatteBorder(borderThickness, 0, 0, borderThickness, borderColor));
+        componentMap.get(7).setBorder(BorderFactory.createMatteBorder(borderThickness, borderThickness, 0, borderThickness, borderColor));
+        componentMap.get(8).setBorder(BorderFactory.createMatteBorder(borderThickness, borderThickness, 0, 0, borderColor));
+    }
+
+    public void setActive() {
+        this.setBackground(Breeze.ForegroundVisited);
+        this.getFieldsMap().forEach((integer, field) -> {
+            if(field.isEnabled())
+                field.setBackground(Breeze.ForegroundVisited);
+        });
+    }
+
+    // GETTERS
+    public Map<Integer, Field> getFieldsMap() { return fieldsMap; }
 }
