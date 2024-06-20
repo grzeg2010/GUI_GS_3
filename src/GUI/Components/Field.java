@@ -2,26 +2,23 @@ package GUI.Components;
 
 import GUI.Colors.Breeze;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 public class Field extends JButton {
-        public Field() {
+    public Field() {
         this.setBackground(Breeze.BackgroundNormal);
+        this.setOpaque(true);
 
         this.addActionListener(new ActionListener() {
-                                   @Override
-                                   public void actionPerformed(ActionEvent e) {
-                                       System.out.println("Kliknieto " + this);
-                                   }
-                               }
-
-        );
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Kliknieto " + this);
+            }
+        });
     }
 
     public void setO() {

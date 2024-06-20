@@ -14,7 +14,6 @@ public class GameBoardCard extends JPanel {
 
     public GameBoardCard() {
         this.setLayout(new BorderLayout());
-        //this.setLayout(new FlowLayout());
 
         gameBoardPanel = new JPanel();
         gameBoardPanel.setLayout(new GridLayout(3, 3));
@@ -41,7 +40,6 @@ public class GameBoardCard extends JPanel {
         sectionsMap.get(2).getFieldsMap().get(6).setX();
 
         this.add(gameBoardPanel, BorderLayout.CENTER);
-        // this.add(gameBoardPanel);
     }
 
     public static void drawBorders(Map<Integer, GUI.Components.Section> componentMap) {
