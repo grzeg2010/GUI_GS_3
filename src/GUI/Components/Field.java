@@ -1,5 +1,6 @@
 package GUI.Components;
 
+import GUI.Cards.GameBoardCard;
 import GUI.Colors.Breeze;
 
 import javax.swing.*;
@@ -9,7 +10,13 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
 public class Field extends JButton {
-    public Field() {
+    private GameBoardCard gameBoard;
+    private Section parentSection;
+
+    public Field(GameBoardCard gameBoard, Section parentSection) {
+        this.gameBoard = gameBoard;
+        this.parentSection = parentSection;
+
         this.setBackground(Breeze.BackgroundNormal);
         this.setOpaque(true);
 
@@ -21,8 +28,13 @@ public class Field extends JButton {
         });
     }
 
-    public void setO() {
+    public void setClicked() {
         this.setEnabled(false);
+        gameBoard.saveMove(this); // TODO this breaks the board rendering
+    }
+
+    public void setO() {
+        this.setClicked();
         this.setBackground(Breeze.ForegroundLink);
 
         BufferedImage circleImg = new BufferedImage(70, 70, BufferedImage.TYPE_INT_ARGB);
@@ -36,7 +48,7 @@ public class Field extends JButton {
     }
 
     public void setX() {
-        this.setEnabled(false);
+        this.setClicked();
         this.setBackground(Breeze.ForegroundNegative);
         int val1 = 10;
         int val2 = 60;

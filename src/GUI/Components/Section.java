@@ -1,5 +1,6 @@
 package GUI.Components;
 
+import GUI.Cards.GameBoardCard;
 import GUI.Colors.Breeze;
 
 import javax.swing.*;
@@ -8,9 +9,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Section extends JPanel {
+    private GameBoardCard gameBoard;
     private Map<Integer, GUI.Components.Field> fieldsMap;
 
-    public Section() {
+    public Section(GameBoardCard gameBoard) {
+        this.gameBoard = gameBoard;
+
         this.setLayout(new GridLayout(3, 3));
         this.setBackground(Breeze.BackgroundNormal);
 
@@ -18,16 +22,16 @@ public class Section extends JPanel {
 
         for(int tableRow = 0; tableRow < 3; tableRow++) {
             for(int tableColumn = 0; tableColumn < 3; tableColumn++) {
-                GUI.Components.Field newSection = new GUI.Components.Field();
+                GUI.Components.Field newSection = new GUI.Components.Field(gameBoard, this);
                 fieldsMap.put((tableRow * 3 + tableColumn), newSection);
                 Section.this.add(newSection);
             }
         }
 
-        drawBorders(fieldsMap);
+        this.drawBorders(fieldsMap);
     }
 
-    public static void drawBorders(Map<Integer, GUI.Components.Field> componentMap) {
+    public void drawBorders(Map<Integer, GUI.Components.Field> componentMap) {
         Color borderColor = Breeze.ForegroundInactive;
         int borderThickness = 2;
 
