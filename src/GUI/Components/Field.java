@@ -1,5 +1,6 @@
 package GUI.Components;
 
+import Data.MovesHistoryData;
 import GUI.Cards.GameBoardCard;
 import GUI.Colors.Breeze;
 
@@ -10,12 +11,16 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
 public class Field extends JButton {
+    private final int index;
     private GameBoardCard gameBoard;
     private Section parentSection;
+    private MovesHistoryData.Player selectedBy;
 
-    public Field(GameBoardCard gameBoard, Section parentSection) {
+    public Field(int index, GameBoardCard gameBoard, Section parentSection) {
+        this.index = index;
         this.gameBoard = gameBoard;
         this.parentSection = parentSection;
+        this.selectedBy = null;
 
         this.setBackground(Breeze.BackgroundNormal);
         this.setOpaque(true);
@@ -23,18 +28,38 @@ public class Field extends JButton {
         this.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Kliknieto " + this);
+                setClicked();
             }
         });
     }
 
     public void setClicked() {
         this.setEnabled(false);
-        gameBoard.saveMove(this); // TODO this breaks the board rendering
+        gameBoard.saveMove(this);
+
+        switch (gameBoard.getCurrentPlayer()) {
+            case o -> setO();
+            case x -> setX();
+        }
+
+        parentSection.validateScore(this.selectedBy);
+        gameBoard.changePlayer();
+
+        if (!parentSection.getIsFocused()) {
+            gameBoard.deactivateAllSections();
+        }
+        else {
+            parentSection.setInactive();
+        }
+
+        if (gameBoard.getSection(index).getWinner() == null)
+            gameBoard.getSection(index).setFocused();
+        else
+            gameBoard.activateAllSections();
     }
 
     public void setO() {
-        this.setClicked();
+        this.selectedBy = MovesHistoryData.Player.o;
         this.setBackground(Breeze.ForegroundLink);
 
         BufferedImage circleImg = new BufferedImage(70, 70, BufferedImage.TYPE_INT_ARGB);
@@ -48,7 +73,7 @@ public class Field extends JButton {
     }
 
     public void setX() {
-        this.setClicked();
+        this.selectedBy = MovesHistoryData.Player.x;
         this.setBackground(Breeze.ForegroundNegative);
         int val1 = 10;
         int val2 = 60;
@@ -63,4 +88,9 @@ public class Field extends JButton {
         g2.dispose();
         this.setIcon(new ImageIcon(crossImg));
     }
+
+    // GETTERS
+    public int getIndex() { return index; }
+    public Section getParentSection() { return parentSection; }
+    public MovesHistoryData.Player getSelectedBy() { return selectedBy; }
 }
