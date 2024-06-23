@@ -19,15 +19,19 @@ public class GameBoardCard extends JPanel {
     private JTable movesTable;
 
     private JFrame mainWindow;
+    private JLabel lWinner;
 
     private MovesHistoryData.Player currentPlayer;
 
     private Map<Integer, GUI.Components.Section> sectionsMap;
 
+    private boolean isFinished;
+
     public GameBoardCard(JFrame mainWindow) {
         generateLayout();
         this.currentPlayer = MovesHistoryData.Player.o;
         this.mainWindow = mainWindow;
+        this.isFinished = false;
     }
 
     private void generateLayout() {
@@ -60,6 +64,9 @@ public class GameBoardCard extends JPanel {
         sidePanel.setPreferredSize(new Dimension(300,500));
 
         sidePanel.add(gameHistory);
+
+        lWinner = new JLabel("Zwycięzca:");
+        sidePanel.add(lWinner);
 
         JButton bNewGame = new JButton("Nowa gra");
         bNewGame.addActionListener(new ActionListener() {
@@ -101,6 +108,58 @@ public class GameBoardCard extends JPanel {
     // SETTERS
     public void setCurrentPlayer(MovesHistoryData.Player newPlayer) {
         currentPlayer = newPlayer;
+    }
+    public void setLabelWinner(MovesHistoryData.Player winnerPlayer) {
+        switch (winnerPlayer) {
+            case o -> {
+                lWinner.setText("Zwycięzca: O");
+                lWinner.setForeground(Breeze.ForegroundLink);
+            }
+            case x -> {
+                lWinner.setText("Zwycięzca: X");
+                lWinner.setForeground(Breeze.ForegroundNegative);
+            }
+            default -> {
+                lWinner.setText("Remis");
+                lWinner.setForeground(Breeze.ForegroundNeutral);
+            }
+        }
+    }
+
+    public void validateScore(MovesHistoryData.Player currentPlayer) {
+        if(!isFinished) {
+            if (
+                // ROWS
+                    sectionsMap.get(0).getWinner() == currentPlayer && sectionsMap.get(1).getWinner() == currentPlayer && sectionsMap.get(2).getWinner() == currentPlayer ||
+                            sectionsMap.get(3).getWinner() == currentPlayer && sectionsMap.get(4).getWinner() == currentPlayer && sectionsMap.get(5).getWinner() == currentPlayer ||
+                            sectionsMap.get(6).getWinner() == currentPlayer && sectionsMap.get(7).getWinner() == currentPlayer && sectionsMap.get(8).getWinner() == currentPlayer ||
+                            // COLUMNS
+                            sectionsMap.get(0).getWinner() == currentPlayer && sectionsMap.get(3).getWinner() == currentPlayer && sectionsMap.get(6).getWinner() == currentPlayer ||
+                            sectionsMap.get(1).getWinner() == currentPlayer && sectionsMap.get(4).getWinner() == currentPlayer && sectionsMap.get(7).getWinner() == currentPlayer ||
+                            sectionsMap.get(2).getWinner() == currentPlayer && sectionsMap.get(5).getWinner() == currentPlayer && sectionsMap.get(8).getWinner() == currentPlayer ||
+                            // SLANT
+                            sectionsMap.get(0).getWinner() == currentPlayer && sectionsMap.get(4).getWinner() == currentPlayer && sectionsMap.get(8).getWinner() == currentPlayer ||
+                            sectionsMap.get(2).getWinner() == currentPlayer && sectionsMap.get(4).getWinner() == currentPlayer && sectionsMap.get(6).getWinner() == currentPlayer
+            ) {
+                this.setLabelWinner(currentPlayer);
+                JDialog winnerDialog = new JDialog();
+                winnerDialog.setSize(new Dimension(400, 400));
+                winnerDialog.add(new JLabel("Zwycięzca: " + currentPlayer));
+                winnerDialog.setVisible(true);
+                this.isFinished = true;
+            } else if (
+                    sectionsMap.get(0).getWinner() != null && sectionsMap.get(1).getWinner() != null && sectionsMap.get(2).getWinner() != null &&
+                            sectionsMap.get(3).getWinner() != null && sectionsMap.get(4).getWinner() != null && sectionsMap.get(5).getWinner() != null &&
+                            sectionsMap.get(6).getWinner() != null && sectionsMap.get(7).getWinner() != null && sectionsMap.get(8).getWinner() != null
+            ) {
+                this.setLabelWinner(MovesHistoryData.Player.Draw);
+                JDialog winnerDialog = new JDialog();
+                winnerDialog.setSize(new Dimension(400, 400));
+                winnerDialog.add(new JLabel("Remis"));
+                winnerDialog.setVisible(true);
+                this.isFinished = true;
+            }
+        }
     }
 
     private void drawBorders(Map<Integer, GUI.Components.Section> componentMap) {

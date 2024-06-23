@@ -5,10 +5,8 @@ import GUI.Cards.GameBoardCard;
 import GUI.Colors.Breeze;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 
 public class Field extends JButton {
     private final int index;
@@ -43,6 +41,7 @@ public class Field extends JButton {
         }
 
         parentSection.validateScore(this.selectedBy);
+        parentSection.getGameBoard().validateScore(this.selectedBy);
         gameBoard.changePlayer();
 
         if (!parentSection.getIsFocused()) {
@@ -62,31 +61,15 @@ public class Field extends JButton {
         this.selectedBy = MovesHistoryData.Player.o;
         this.setBackground(Breeze.ForegroundLink);
 
-        BufferedImage circleImg = new BufferedImage(70, 70, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2 = circleImg.createGraphics();
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setColor(Breeze.ForegroundNormal);
-        g2.setStroke(new BasicStroke(8));
-        g2.drawOval(5, 5, 60, 60);
-        g2.dispose();
-        this.setIcon(new ImageIcon(circleImg));
+        this.setIcon(new ImageIcon(GUI.Components.AbstractIcons.generateCircleIcon(70)));
     }
 
     public void setX() {
         this.selectedBy = MovesHistoryData.Player.x;
         this.setBackground(Breeze.ForegroundNegative);
-        int val1 = 10;
-        int val2 = 60;
 
-        BufferedImage crossImg = new BufferedImage(70, 70, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2 = crossImg.createGraphics();
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setColor(Breeze.ForegroundNormal);
-        g2.setStroke(new BasicStroke(8));
-        g2.drawLine(val1, val1, val2, val2);
-        g2.drawLine(val2, val1, val1, val2);
-        g2.dispose();
-        this.setIcon(new ImageIcon(crossImg));
+
+        this.setIcon(new ImageIcon(GUI.Components.AbstractIcons.generateCrossIcon(70)));
     }
 
     // GETTERS

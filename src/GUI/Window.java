@@ -12,9 +12,7 @@ public class Window extends JFrame {
     public Window() {
         // JFrame settings
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        // this.setSize(new Dimension(400, 400));
         this.setSize(new Dimension(1200, 900));
-        // this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setTitle("Ultimate Tik Tak Toe");
 
         // Content Pane settings

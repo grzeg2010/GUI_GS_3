@@ -6,6 +6,8 @@ import GUI.Colors.Breeze;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,14 +19,27 @@ public class Section extends JPanel  {
     private boolean isFocused;
     private MovesHistoryData.Player wonBy;
 
+    private JPanel nineFieldsCard, winnerCard;
+    private CardLayout cardLayout;
+
     public Section(int index, GameBoardCard gameBoard) {
         this.index = index;
         this.gameBoard = gameBoard;
         this.isFocused = false;
         this.wonBy = null;
+        this.cardLayout = new CardLayout();
+        this.nineFieldsCard = new JPanel();
+        this.winnerCard = new JPanel();
 
-        this.setLayout(new GridLayout(3, 3));
-        this.setBackground(Breeze.BackgroundNormal);
+        this.setLayout(cardLayout);
+
+        nineFieldsCard.setLayout(new GridLayout(3, 3));
+        nineFieldsCard.setBackground(Breeze.BackgroundNormal);
+
+        this.add(nineFieldsCard);
+
+        winnerCard.setLayout(null);
+        this.add(winnerCard);
 
         fieldsMap = new HashMap<>();
 
@@ -33,7 +48,7 @@ public class Section extends JPanel  {
                 int fieldIndex = tableRow * 3 + tableColumn;
                 GUI.Components.Field newField = new GUI.Components.Field(fieldIndex, gameBoard, this);
                 fieldsMap.put(fieldIndex, newField);
-                Section.this.add(newField);
+                nineFieldsCard.add(newField);
             }
         }
 
@@ -42,7 +57,6 @@ public class Section extends JPanel  {
 
     public void setFocused() {
         this.isFocused = true;
-        this.setBackground(Breeze.ForegroundVisited);
         this.getFieldsMap().forEach((integer, field) -> {
             if(field.getSelectedBy() == null) {
                 field.setBackground(Breeze.ForegroundVisited);
@@ -53,9 +67,6 @@ public class Section extends JPanel  {
 
     public void setInactive() {
         this.isFocused = false;
-        if(this.wonBy == null) {
-            this.setBackground(Breeze.BackgroundNormal);
-        }
         this.getFieldsMap().forEach((integer, field) -> {
             if(field.getSelectedBy() == null) {
                 field.setBackground(Breeze.BackgroundNormal);
@@ -66,7 +77,6 @@ public class Section extends JPanel  {
 
     public void setActive() {
         if(this.wonBy == null) {
-            this.setBackground(Breeze.ForegroundPositive);
             this.getFieldsMap().forEach((integer, field) -> {
                 if (field.getSelectedBy() == null) {
                     field.setBackground(Breeze.ForegroundPositive);
@@ -91,35 +101,59 @@ public class Section extends JPanel  {
                         fieldsMap.get(2).getSelectedBy() == currentPlayer && fieldsMap.get(4).getSelectedBy() == currentPlayer && fieldsMap.get(6).getSelectedBy() == currentPlayer
         ) {
             this.wonBy = currentPlayer;
+            JLabel winnerIcon = new JLabel();
             if(this.wonBy == MovesHistoryData.Player.o) {
-                this.setBackground(Breeze.ForegroundLink);
+                winnerCard.setBackground(Breeze.ForegroundLink);
+                winnerIcon.setIcon(new ImageIcon(GUI.Components.AbstractIcons.generateCircleIcon(100)));
             }
             else {
-                this.setBackground(Breeze.ForegroundNegative);
+                winnerCard.setBackground(Breeze.ForegroundNegative);
+                winnerIcon.setIcon(new ImageIcon(GUI.Components.AbstractIcons.generateCrossIcon(100)));
             }
-            fieldsMap.forEach((integer, field) -> {
-                field.setVisible(false);
-                field.setOpaque(false);
-            });
+            Insets insets = winnerCard.getInsets();
+            Dimension size = winnerIcon.getPreferredSize();
+            winnerIcon.setBounds(75 + insets.left, 75 + insets.top,
+                    size.width, size.height);
+            winnerCard.add(winnerIcon);
+            cardLayout.last(this);
+            this.addMouseListener(hoverAction);
         } else if (
                 fieldsMap.get(0).getSelectedBy() != null && fieldsMap.get(1).getSelectedBy() != null && fieldsMap.get(2).getSelectedBy() != null &&
                         fieldsMap.get(3).getSelectedBy() != null && fieldsMap.get(4).getSelectedBy() != null && fieldsMap.get(5).getSelectedBy() != null &&
                         fieldsMap.get(6).getSelectedBy() != null && fieldsMap.get(7).getSelectedBy() != null && fieldsMap.get(8).getSelectedBy() != null
         ) {
             this.wonBy = MovesHistoryData.Player.Draw;
-            this.setBackground(Breeze.ForegroundNeutral);
-            fieldsMap.forEach((integer, field) -> {
-                field.setVisible(false);
-                field.setOpaque(false);
-            });
+            JLabel winnerIcon = new JLabel();
+            winnerCard.setBackground(Breeze.ForegroundNeutral);
+            winnerIcon.setIcon(new ImageIcon(GUI.Components.AbstractIcons.generateDashIcon(100)));
+            Insets insets = winnerCard.getInsets();
+            Dimension size = winnerIcon.getPreferredSize();
+            winnerIcon.setBounds(75 + insets.left, 75 + insets.top,
+                    size.width, size.height);
+            winnerCard.add(winnerIcon);
+            cardLayout.last(this);
+            this.addMouseListener(hoverAction);
         }
     }
+
+    MouseAdapter hoverAction = new MouseAdapter() {
+        @Override
+        public void mousePressed(MouseEvent me) {
+            cardLayout.first(Section.this);
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent me) {
+            cardLayout.last(Section.this);
+        }
+    };
 
     // GETTERS
     public int getIndex() { return index; }
     public Map<Integer, Field> getFieldsMap() { return fieldsMap; }
     public MovesHistoryData.Player getWinner() { return wonBy; }
     public boolean getIsFocused() { return isFocused; }
+    public GameBoardCard getGameBoard() { return gameBoard; }
 
     public void drawBorders(Map<Integer, GUI.Components.Field> componentMap) {
         Color borderColor = Breeze.ForegroundInactive;
