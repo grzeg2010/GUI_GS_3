@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,16 +23,20 @@ public class GameBoardCard extends JPanel {
     private JLabel lWinner;
 
     private MovesHistoryData.Player currentPlayer;
+    private MovesHistoryData.Player computerPlayer;
 
     private Map<Integer, GUI.Components.Section> sectionsMap;
 
     private boolean isFinished;
+    private Section focusedSection;
 
     public GameBoardCard(JFrame mainWindow) {
         generateLayout();
         this.currentPlayer = MovesHistoryData.Player.o;
+        this.computerPlayer = null;
         this.mainWindow = mainWindow;
         this.isFinished = false;
+        this.focusedSection = null;
     }
 
     private void generateLayout() {
@@ -78,6 +83,28 @@ public class GameBoardCard extends JPanel {
         });
         sidePanel.add(bNewGame);
 
+        InputMap inputMap = this.getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_1, 0), "press1");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_2, 0), "press2");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_3, 0), "press3");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_4, 0), "press4");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_5, 0), "press5");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_6, 0), "press6");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_7, 0), "press7");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_8, 0), "press8");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_9, 0), "press9");
+
+        ActionMap actionMap = this.getActionMap();
+        actionMap.put("press1", new NumberPressedAction(1, this));
+        actionMap.put("press2", new NumberPressedAction(2, this));
+        actionMap.put("press3", new NumberPressedAction(3, this));
+        actionMap.put("press4", new NumberPressedAction(4, this));
+        actionMap.put("press5", new NumberPressedAction(5, this));
+        actionMap.put("press6", new NumberPressedAction(6, this));
+        actionMap.put("press7", new NumberPressedAction(7, this));
+        actionMap.put("press8", new NumberPressedAction(8, this));
+        actionMap.put("press9", new NumberPressedAction(9, this));
+
         this.add(gameBoardPanel, BorderLayout.CENTER);
         this.add(sidePanel, BorderLayout.EAST);
     }
@@ -103,12 +130,14 @@ public class GameBoardCard extends JPanel {
 
     // GETTERS
     public MovesHistoryData.Player getCurrentPlayer() { return currentPlayer; }
+    public MovesHistoryData.Player getComputerPlayer() { return computerPlayer; }
     public Section getSection(int index) { return sectionsMap.get(index); }
+    public Section getFocusedSection() { return focusedSection; }
 
     // SETTERS
-    public void setCurrentPlayer(MovesHistoryData.Player newPlayer) {
-        currentPlayer = newPlayer;
-    }
+    public void setCurrentPlayer(MovesHistoryData.Player newPlayer) { currentPlayer = newPlayer; }
+    public void setComputerPlayer(MovesHistoryData.Player newComputerPlayer) { this.computerPlayer = newComputerPlayer; }
+    public void setFocusedSection(Section newSection) { focusedSection = newSection; }
     public void setLabelWinner(MovesHistoryData.Player winnerPlayer) {
         switch (winnerPlayer) {
             case o -> {
@@ -123,6 +152,32 @@ public class GameBoardCard extends JPanel {
                 lWinner.setText("Remis");
                 lWinner.setForeground(Breeze.ForegroundNeutral);
             }
+        }
+    }
+
+    public void activateComputerPlayer(MovesHistoryData.Player newComputerPlayer) {
+        setComputerPlayer(newComputerPlayer);
+        if(computerPlayer == currentPlayer) {
+            computerMove();
+        }
+    }
+
+    public void computerMove() {
+        int randomNumber = (int)(Math.random() * 9);
+        // System.out.println(randomNumber);
+        if(focusedSection != null) {
+            if(this.getFocusedSection().getFieldsMap().get(randomNumber).getSelectedBy() == null)
+                this.getFocusedSection().getFieldsMap().get(randomNumber).setClicked();
+            else
+                computerMove();
+        } else {
+            if(this.getSection(randomNumber).getWinner() == null) {
+                this.deactivateAllSections();
+                this.getSection(randomNumber).setFocused();
+                computerMove();
+            }
+            else
+                computerMove();
         }
     }
 
@@ -177,5 +232,28 @@ public class GameBoardCard extends JPanel {
         componentMap.get(6).setBorder(BorderFactory.createMatteBorder(borderThickness, 0, 0, borderThickness, borderColor));
         componentMap.get(7).setBorder(BorderFactory.createMatteBorder(borderThickness, borderThickness, 0, borderThickness, borderColor));
         componentMap.get(8).setBorder(BorderFactory.createMatteBorder(borderThickness, borderThickness, 0, 0, borderColor));
+    }
+}
+
+class NumberPressedAction extends AbstractAction {
+    private int pressedNumber;
+    private GameBoardCard gameBoardCard;
+
+    public NumberPressedAction(int pressedNumber, GameBoardCard gameBoardCard) {
+        this.pressedNumber = pressedNumber;
+        this.gameBoardCard = gameBoardCard;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if(gameBoardCard.getFocusedSection() != null) {
+            gameBoardCard.getFocusedSection().getFieldsMap().get(pressedNumber-1).setClicked();
+        }
+        else {
+            if(gameBoardCard.getSection(pressedNumber-1).getWinner() == null) {
+                gameBoardCard.deactivateAllSections();
+                gameBoardCard.getSection(pressedNumber - 1).setFocused();
+            }
+        }
     }
 }

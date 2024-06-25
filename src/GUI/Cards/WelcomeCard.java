@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
 public class WelcomeCard extends JPanel {
     private JButton bSingleplayer, bMultiplayer;
 
-    public WelcomeCard(JFrame mainWindow, JPanel mainWindowContentP, CardLayout mainWindowCardL) {
+    public WelcomeCard(JPanel mainWindowContentP, CardLayout mainWindowCardL) {
         this.setLayout(new FlowLayout());
 
         bSingleplayer = new JButton("Singleplayer");
@@ -26,8 +26,6 @@ public class WelcomeCard extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 mainWindowCardL.next(mainWindowContentP);
-                mainWindow.setSize(new Dimension(1280, 900));
-                mainWindow.pack();
             }
         });
         this.add(bMultiplayer);

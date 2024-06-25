@@ -32,29 +32,33 @@ public class Field extends JButton {
     }
 
     public void setClicked() {
-        this.setEnabled(false);
-        gameBoard.saveMove(this);
+        if(this.selectedBy != MovesHistoryData.Player.x && this.selectedBy != MovesHistoryData.Player.o) {
+            this.setEnabled(false);
+            gameBoard.saveMove(this);
 
-        switch (gameBoard.getCurrentPlayer()) {
-            case o -> setO();
-            case x -> setX();
+            switch (gameBoard.getCurrentPlayer()) {
+                case o -> setO();
+                case x -> setX();
+            }
+
+            parentSection.validateScore(this.selectedBy);
+            parentSection.getGameBoard().validateScore(this.selectedBy);
+            gameBoard.changePlayer();
+
+            if (!parentSection.getIsFocused()) {
+                gameBoard.deactivateAllSections();
+            } else {
+                parentSection.setInactive();
+            }
+
+            if (gameBoard.getSection(index).getWinner() == null)
+                gameBoard.getSection(index).setFocused();
+            else
+                gameBoard.activateAllSections();
+
+            if(gameBoard.getCurrentPlayer() == gameBoard.getComputerPlayer())
+                gameBoard.computerMove();
         }
-
-        parentSection.validateScore(this.selectedBy);
-        parentSection.getGameBoard().validateScore(this.selectedBy);
-        gameBoard.changePlayer();
-
-        if (!parentSection.getIsFocused()) {
-            gameBoard.deactivateAllSections();
-        }
-        else {
-            parentSection.setInactive();
-        }
-
-        if (gameBoard.getSection(index).getWinner() == null)
-            gameBoard.getSection(index).setFocused();
-        else
-            gameBoard.activateAllSections();
     }
 
     public void setO() {

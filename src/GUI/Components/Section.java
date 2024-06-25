@@ -56,17 +56,21 @@ public class Section extends JPanel  {
     }
 
     public void setFocused() {
-        this.isFocused = true;
-        this.getFieldsMap().forEach((integer, field) -> {
-            if(field.getSelectedBy() == null) {
-                field.setBackground(Breeze.ForegroundVisited);
-                field.setEnabled(true);
-            }
-        });
+        if(this.wonBy == null) {
+            this.isFocused = true;
+            this.gameBoard.setFocusedSection(this);
+            this.getFieldsMap().forEach((integer, field) -> {
+                if (field.getSelectedBy() == null) {
+                    field.setBackground(Breeze.ForegroundVisited);
+                    field.setEnabled(true);
+                }
+            });
+        }
     }
 
     public void setInactive() {
         this.isFocused = false;
+        this.gameBoard.setFocusedSection(null);
         this.getFieldsMap().forEach((integer, field) -> {
             if(field.getSelectedBy() == null) {
                 field.setBackground(Breeze.BackgroundNormal);

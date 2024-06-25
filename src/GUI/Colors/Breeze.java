@@ -17,20 +17,6 @@ public interface Breeze {
     Color ForegroundPositive=new Color(39,174,96);
     Color ForegroundVisited=new Color(155,89,182);
 
-    // [Colors:Window]
-/*    BackgroundAlternate=49,54,59
-    BackgroundNormal=42,46,50
-    DecorationFocus=61,174,233
-    DecorationHover=61,174,233
-    ForegroundActive=61,174,233
-    ForegroundInactive=161,169,177
-    ForegroundLink=29,153,243
-    ForegroundNegative=218,68,83
-    ForegroundNeutral=246,116,0
-    ForegroundNormal=252,252,252
-    ForegroundPositive=39,174,96
-    ForegroundVisited=155,89,182*/
-
     // Dark Breeze Theme by KDE
     // https://github.com/KDE/breeze/blob/master/colors/BreezeDark.colors
 }
